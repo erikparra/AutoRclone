@@ -90,9 +90,9 @@ def findProcessIdByName(processName, arg):
 		try:
 			pinfo = proc.as_dict(attrs=['pid', 'name', 'create_time', 'cmdline'])
 			# Check if process name contains the given name string.
-			if processName.lower() in pinfo['name'].lower() and arg.lower() in pinfo['cmdline'].lower():
+			if processName in pinfo['name'] and arg in pinfo['cmdline']:
 				listOfProcessObjects.append(pinfo)
-		except (psutil.NoSuchProcess, psutil.AccessDenied , psutil.ZombieProcess):
+		except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
 			pass
 
 	return listOfProcessObjects
@@ -135,8 +135,10 @@ def main():
 	time_start = time.time()
 	print("Start: {}".format(time.strftime("%H:%M:%S")))
 
-	if len(findProcessIdByName('rclone', 'mount')) > 0:
-		log.debug('rclone mount already mounted. Ending run.')
+	process_list = findProcessIdByName('rclone', 'mount')
+	if len(process_list) > 0:
+		print( process_list)
+		print('rclone mount already mounted. Ending run.')
 
 
 if __name__ == "__main__":

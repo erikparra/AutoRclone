@@ -60,7 +60,8 @@ def check_rclone_program():
 	ret = distutils.spawn.find_executable(rclone_prog)
 	if ret is None:
 		logging.error('Please install rclone: https://rclone.org/downloads/')
-		sys.exit('Please install rclone: https://rclone.org/downloads/')
+		sys.exit(1)
+		#sys.exit('Please install rclone: https://rclone.org/downloads/')
 	return ret
 
 def check_mergerfs_program():
@@ -71,7 +72,8 @@ def check_mergerfs_program():
 	ret = distutils.spawn.find_executable(mergerfs_prog)
 	if ret is None:
 		logging.error('Please install mergerfs: https://github.com/trapexit/mergerfs')
-		sys.exit('Please install rclone: https://github.com/trapexit/mergerfs')
+		sys.exit(1)
+		#sys.exit('Please install rclone: https://github.com/trapexit/mergerfs')
 	return ret
 
 def checkIfProcessRunning(processName):

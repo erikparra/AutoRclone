@@ -139,14 +139,12 @@ def main():
 		logging.debug('Rclone config file not found: %s', args.config)
 		sys.exit(0)
 
-	#time_start = time.time()
-	#logging.debug('Start: %s', time.strftime('%H:%M:%S'))
-
+	# if remote not mounted, use rclone to mount directory
 	if not is_rclone_mounted:
 		logging.debug('Creating mount for remote: %s', args.remote)
 
 		# Create rclone mount
-		rclone_mount_command = 'rclone mount' \
+		rclone_mount_command = 'nohup rclone mount' \
 			' --config {}' \
 			' --allow-other' \
 			' --buffer-size 256M' \
@@ -156,10 +154,10 @@ def main():
 			' --vfs-read-chunk-size 128M' \
 			' --vfs-read-chunk-size-limit off' \
 			' --vfs-cache-mode writes ' \
-			' {}: {}'.format(args.config, args.remote, args.remote_path)
+			' {}: {} &'.format(args.config, args.remote, args.remote_path)
 
 		try:
-			subprocess.check_call(rclone_mount_command, shell=True)
+			subprocess.run(rclone_mount_command, shell=True)
 			logging.debug('Running rclone mount command: %s', rclone_mount_command)
 			time.sleep(10)
 		except subprocess.SubprocessError as error:
@@ -169,8 +167,6 @@ def main():
 		process_list = findProcessIdByName('rclone', 'mount')
 		if len(process_list) > 0:
 			logging.debug('Rclone started and mounted, PID: %s', process_list[0]['pid'])
-
-
 
 
 if __name__ == "__main__":

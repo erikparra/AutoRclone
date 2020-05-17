@@ -119,6 +119,8 @@ def main():
 		handlers=[
 			logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path + "/rclone_auto_mount.log"))])
 
+	logging.info('AUTO MOUNT STARTED: %s', time.strftime("%H:%M:%S"))
+
 	# checking if rclone already mounted
 	is_rclone_mounted = False
 	process_list = findProcessIdByName('rclone', 'mount')
@@ -126,10 +128,10 @@ def main():
 		is_rclone_mounted = True
 		logging.debug('Rclone is already running and mounted, PID: %s', process_list[0]['pid'])
 
-	#create paths if don't exists
-	check_path( args.remote_path )
-	check_path( args.local_path )
-	check_path( args.mergerfs_path )
+	# create paths if don't exists
+	check_path(args.remote_path)
+	check_path(args.local_path)
+	check_path(args.mergerfs_path)
 
 	# if rclone is not installed, quit directly
 	rclone_path = check_rclone_program()
@@ -164,6 +166,7 @@ def main():
 			logging.exception('Rclone mount comment error: %s', str(error))
 			sys.exit(1)
 
+		# check if mount successful
 		process_list = findProcessIdByName('rclone', 'mount')
 		if len(process_list) > 0:
 			logging.debug('Rclone started and mounted, PID: %s', process_list[0]['pid'])

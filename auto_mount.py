@@ -119,7 +119,7 @@ def main():
 		handlers=[
 			logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path + "/rclone_auto_mount.log"))])
 
-	logging.info('AUTO MOUNT STARTED: %s', time.strftime("%H:%M:%S"))
+	logging.info('Auto Mergerfs/Rclone Mount Started.')
 
 	# checking if rclone already mounted
 	is_rclone_mounted = False

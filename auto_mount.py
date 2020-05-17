@@ -101,44 +101,75 @@ def findProcessIdByName(processName, arg):
 def check_path(path):
 	try:
 		os.mkdir(path)
-		print("Directory ", path, " Created.")
+		logging.debug("Directory %s created.", path)
 	except FileExistsError:
-		print("Directory ", path, " already exists.")
+		logging.debug("Directory %s already exists.", path)
 
 
 def main():
 
 	args = parse_args()
 
+	# logging setup
+	if not os.path.exists(args.log_path):
+		os.mkdir(args.log_path)
+	logging.basicConfig(
+		level=logging.DEBUG,
+		format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s',
+		handlers=[
+			logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path + "/rclone_auto_mount.log"))])
+
+	# checking if rclone already mounted
+	is_rclone_mounted = False
+	process_list = findProcessIdByName('rclone', 'mount')
+	if len(process_list) > 0:
+		is_rclone_mounted = True
+		logging.debug('Rclone is already running and mounted, PID: %s', process_list[0]['pid'])
+
 	#create paths if don't exists
 	check_path( args.remote_path )
 	check_path( args.local_path )
 	check_path( args.mergerfs_path )
-	check_path( args.log_path )
-
-	# logging setup
-	log = logging.getLogger()
-	lhandler = logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path+"/rclone_auto_mount.log"))
-	formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-	lhandler.setFormatter(formatter)
-	log.addHandler(lhandler)
-	log.setLevel(logging.DEBUG)
 
 	# if rclone is not installed, quit directly
-	ret = check_rclone_program()
-	print("rclone is detected: {}".format(ret))
+	rclone_path = check_rclone_program()
+	logging.debug('rclone installation detected: %s', rclone_path)
 
 	if not os.path.isfile(args.config):
-		print('Rclone config file not found.')
+		logging.debug('Rclone config file not found: %s', args.config)
 		sys.exit(0)
 
-	time_start = time.time()
-	print("Start: {}".format(time.strftime("%H:%M:%S")))
+	#time_start = time.time()
+	#logging.debug('Start: %s', time.strftime('%H:%M:%S'))
+
+	logging.debug('Creating mount for remote: %s', args.remote)
+
+	# Create rclone mount
+	rclone_mount_command = 'rclone mount' \
+		' --config {}' \
+		' --allow-other' \
+		' --buffer-size 256M' \
+		' --dir-cache-time 720h' \
+		' --drive-chunk-size 512M' \
+		' --log-level INFO' \
+		' --vfs-read-chunk-size 128M' \
+		' --vfs-read-chunk-size-limit off' \
+		' --vfs-cache-mode writes ' \
+		' {}: {}'.format(args.config, args.remote, args.remote_path)
+
+	try:
+		subprocess.check_call(rclone_mount_command, shell=True)
+		logging.debug('Running rclone mount command: %s', rclone_mount_command)
+		time.sleep(10)
+	except subprocess.SubprocessError as error:
+		logging.exception('Rclone mount comment error: %s', str(error))
+		sys.exit(1)
 
 	process_list = findProcessIdByName('rclone', 'mount')
 	if len(process_list) > 0:
-		print( process_list)
-		print('rclone mount already mounted. Ending run.')
+		logging.debug('Rclone started and mounted, PID: %s', process_list[0]['pid'])
+
+
 
 
 if __name__ == "__main__":

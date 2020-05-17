@@ -59,7 +59,19 @@ def check_rclone_program():
 		rclone_prog += ".exe"
 	ret = distutils.spawn.find_executable(rclone_prog)
 	if ret is None:
-		sys.exit("Please install rclone firstly: https://rclone.org/downloads/")
+		logging.error('Please install rclone: https://rclone.org/downloads/')
+		sys.exit('Please install rclone: https://rclone.org/downloads/')
+	return ret
+
+def check_mergerfs_program():
+	# promote if user has not install mergerfs
+	mergerfs_prog = 'mergerfs'
+	if is_windows():
+		mergerfs_prog += ".exe"
+	ret = distutils.spawn.find_executable(mergerfs_prog)
+	if ret is None:
+		logging.error('Please install mergerfs: https://github.com/trapexit/mergerfs')
+		sys.exit('Please install rclone: https://github.com/trapexit/mergerfs')
 	return ret
 
 def checkIfProcessRunning(processName):
@@ -137,6 +149,10 @@ def main():
 	rclone_path = check_rclone_program()
 	logging.debug('rclone installation detected: %s', rclone_path)
 
+	# if mergerfs is not installed, quit directly
+	mergerfs_path = check_mergerfs_program()
+	logging.debug('mergerfs installation detected: %s', mergerfs_path)
+
 	if not os.path.isfile(args.config):
 		logging.debug('Rclone config file not found: %s', args.config)
 		sys.exit(0)
@@ -161,7 +177,7 @@ def main():
 		try:
 			subprocess.run(rclone_mount_command, shell=True)
 			logging.debug('Running rclone mount command: %s', rclone_mount_command)
-			time.sleep(10)
+			time.sleep(3)
 		except subprocess.SubprocessError as error:
 			logging.exception('Rclone mount comment error: %s', str(error))
 			sys.exit(1)
@@ -170,6 +186,8 @@ def main():
 		process_list = findProcessIdByName('rclone', 'mount')
 		if len(process_list) > 0:
 			logging.debug('Rclone started and mounted, PID: %s', process_list[0]['pid'])
+
+
 
 
 if __name__ == "__main__":

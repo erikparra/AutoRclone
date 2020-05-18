@@ -135,13 +135,6 @@ def main():
 
 	logging.info('Auto Mergerfs/Rclone Mount Started.')
 
-	# checking if rclone already mounted
-	is_rclone_mounted = False
-	process_list = findProcessIdByName('rclone', 'mount')
-	if len(process_list) > 0:
-		is_rclone_mounted = True
-		logging.debug('Rclone is already running and mounted, PID: %s', process_list[0]['pid'])
-
 	# create paths if don't exists
 	check_path(args.remote_path)
 	check_path(args.local_path)
@@ -158,6 +151,13 @@ def main():
 	if not os.path.isfile(args.config):
 		logging.debug('Rclone config file not found: %s', args.config)
 		sys.exit(0)
+
+	# checking if rclone already mounted
+	is_rclone_mounted = False
+	process_list = findProcessIdByName('rclone', 'mount')
+	if len(process_list) > 0:
+		is_rclone_mounted = True
+		logging.debug('Rclone is already running and mounted, PID: %s', process_list[0]['pid'])
 
 	# if remote not mounted, use rclone to mount directory
 	if not is_rclone_mounted:
@@ -181,7 +181,7 @@ def main():
 			logging.debug('Running rclone mount command: %s', rclone_mount_command)
 			time.sleep(3)
 		except subprocess.SubprocessError as error:
-			logging.exception('Rclone mount comment error: %s', str(error))
+			logging.exception('Rclone mount command error: %s', str(error))
 			sys.exit(1)
 
 		# check if mount successful
@@ -189,7 +189,36 @@ def main():
 		if len(process_list) > 0:
 			logging.debug('Rclone started and mounted, PID: %s', process_list[0]['pid'])
 
+	# check if mergerfs mounted/running
+	is_mergerfs_mounted=False
+	mergerfs_proc_list = findProcessIdByName('mergerfs', '%s:%s'.format(args.local_path, args.remote_path))
+	if len(mergerfs_proc_list) > 0:
+		is_mergerfs_mounted=True
+		logging.debug('Mergerfs is already running and mounted, PID: %s', mergerfs_proc_list[0]['pid'])
 
+	if not is_mergerfs_mounted:
+		logging.debug('Creating mergerfs mount: %s', args.mergerfs_path)
+
+		# create mergerfs mount
+		mergerfs_mount_command = 'nohup mergerfs' \
+			' %s:%s %s' \
+			' -o rw,use_ino,allow_other,cache.files=partial,dropcacheonclose=true,async_read=false,func.getattr=newest,category.action=all,category.create=ff' \
+			''.format(args.local_path, args.remote_path, args.mergerfs_path)
+
+		try:
+			subprocess.run(mergerfs_mount_command, shell=True)
+			logging.debug('Running mergerfs command: %s', mergerfs_mount_command)
+			time.sleep(3)
+		except subprocess.SubprocessError as error:
+			logging.exception('Mergerfs command error: %s', str(error))
+			sys.exit(1)
+
+		# check if mount successful
+		mergerfs_proc_list = findProcessIdByName('mergerfs', '%s:%s'.format(args.local_path, args.remote_path))
+		if len(mergerfs_proc_list) > 0:
+			logging.debug('Mergerfs started and mounted, PID: %s', mergerfs_proc_list[0]['pid'])
+
+		logging.info('Script terminating successfully.')
 
 
 if __name__ == "__main__":

@@ -213,7 +213,7 @@ def main():
 			sys.exit(1)
 
 		# check if mount successful
-		mergerfs_proc_list = findProcessIdByName('mergerfs', '%s:%s'.format(args.local_path, args.remote_path))
+		mergerfs_proc_list = findProcessIdByName('mergerfs', '{}:{}'.format(args.local_path, args.remote_path))
 		if len(mergerfs_proc_list) > 0:
 			logging.debug('Mergerfs started and mounted, PID: %s', mergerfs_proc_list[0]['pid'])
 

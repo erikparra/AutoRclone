@@ -200,10 +200,9 @@ def main():
 		logging.debug('Creating mergerfs mount: %s', args.mergerfs_path)
 
 		# create mergerfs mount
-		mergerfs_mount_command = 'nohup mergerfs' \
-			' %s:%s %s' \
-			' -o rw,use_ino,allow_other,cache.files=partial,dropcacheonclose=true,async_read=false,func.getattr=newest,category.action=all,category.create=ff' \
-			''.format(args.local_path, args.remote_path, args.mergerfs_path)
+		mergerfs_mount_command = 'nohup mergerfs %s:%s %s'.format(args.local_path, args.remote_path, args.mergerfs_path)
+		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,use_ino,allow_other,cache.files=partial,dropcacheonclose=true,async_read=false,func.getattr=newest,category.action=all,category.create=ff'
+
 
 		try:
 			subprocess.run(mergerfs_mount_command, shell=True)

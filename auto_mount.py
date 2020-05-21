@@ -191,7 +191,7 @@ def main():
 
 	# check if mergerfs mounted/running
 	is_mergerfs_mounted=False
-	mergerfs_proc_list = findProcessIdByName('mergerfs', '%s:%s'.format(args.local_path, args.remote_path))
+	mergerfs_proc_list = findProcessIdByName('mergerfs', '{}:{}'.format(args.local_path, args.remote_path))
 	if len(mergerfs_proc_list) > 0:
 		is_mergerfs_mounted=True
 		logging.debug('Mergerfs is already running and mounted, PID: %s', mergerfs_proc_list[0]['pid'])

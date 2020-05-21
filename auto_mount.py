@@ -217,7 +217,7 @@ def main():
 		if len(mergerfs_proc_list) > 0:
 			logging.debug('Mergerfs started and mounted, PID: %s', mergerfs_proc_list[0]['pid'])
 
-		logging.info('Script terminating successfully.')
+	logging.info('Script terminating successfully.')
 
 
 if __name__ == "__main__":

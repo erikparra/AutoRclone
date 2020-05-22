@@ -201,7 +201,7 @@ def main():
 
 		# create mergerfs mount
 		mergerfs_mount_command = 'nohup mergerfs {}:{} {}'.format(args.local_path, args.remote_path, args.mergerfs_path)
-		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,noforget' \
+		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,noforget,' \
 				'use_ino,allow_other,cache.files=off,' \
 				'dropcacheonclose=true,async_read=false,func.getattr=newest,' \
 				'category.action=all,category.create=ff'

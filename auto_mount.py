@@ -210,7 +210,7 @@ def main():
 		try:
 			subprocess.run(mergerfs_mount_command, shell=True)
 			logging.debug('Running mergerfs command: %s', mergerfs_mount_command)
-			time.sleep(3)
+			time.sleep(5)
 		except subprocess.SubprocessError as error:
 			logging.exception('Mergerfs command error: %s', str(error))
 			sys.exit(1)

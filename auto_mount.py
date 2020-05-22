@@ -187,7 +187,9 @@ def main():
 		# check if mount successful
 		process_list = findProcessIdByName('rclone', 'mount')
 		if len(process_list) > 0:
-			logging.debug('Rclone started and mounted, PID: %s', process_list[0]['pid'])
+			logging.info('Rclone started and mounted, PID: %s', process_list[0]['pid'])
+		else:
+			logging.error('Rclone process not found.')
 
 	# check if mergerfs mounted/running
 	is_mergerfs_mounted=False
@@ -210,7 +212,7 @@ def main():
 		try:
 			subprocess.run(mergerfs_mount_command, shell=True)
 			logging.debug('Running mergerfs command: %s', mergerfs_mount_command)
-			time.sleep(5)
+			time.sleep(3)
 		except subprocess.SubprocessError as error:
 			logging.exception('Mergerfs command error: %s', str(error))
 			sys.exit(1)
@@ -218,7 +220,9 @@ def main():
 		# check if mount successful
 		mergerfs_proc_list = findProcessIdByName('mergerfs', '{}:{}'.format(args.local_path, args.remote_path))
 		if len(mergerfs_proc_list) > 0:
-			logging.debug('Mergerfs started and mounted, PID: %s', mergerfs_proc_list[0]['pid'])
+			logging.info('Mergerfs started and mounted, PID: %s', mergerfs_proc_list[0]['pid'])
+		else:
+			logging.error('Mergerfs process not found.')
 
 	logging.info('Script terminating successfully.')
 

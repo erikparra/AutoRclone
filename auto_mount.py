@@ -119,6 +119,22 @@ def check_path(path):
 	except FileExistsError:
 		logging.debug("Directory %s already exists.", path)
 
+def log_rotate_setup(path):
+	log_file_path = path + "/" + log_file_name
+	logrotate_conf_file_path = "/etc/logrotate.d/automount.conf"
+
+	if not os.path.exists(logrotate_conf_file_path):
+		with open(logrotate_conf_file_path, 'w') as fp:
+			text_to_write = "{} {\n" \
+						"daily \n" \
+						"rotate 7\n" \
+						"compress\n" \
+						"missingok\n" \
+						"}".format(log_file_path)
+			try:
+				fp.write(text_to_write)
+			except:
+				logging.error("failed to write {} to {}".format(text_to_write, logrotate_conf_file_path))
 
 def main():
 
@@ -127,6 +143,7 @@ def main():
 	# logging setup
 	if not os.path.exists(args.log_path):
 		os.makedirs(args.log_path)
+
 	logging.basicConfig(
 		level=logging.DEBUG,
 		format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s',
@@ -134,6 +151,8 @@ def main():
 			logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path + "/" + log_file_name))])
 
 	logging.info('Auto Mergerfs/Rclone Mount Started.')
+
+	log_rotate_setup( args.log_path )
 
 	# create paths if don't exists
 	check_path(args.remote_path)

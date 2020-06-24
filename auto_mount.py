@@ -30,7 +30,7 @@ import logging.handlers
 from signal import signal, SIGINT
 
 # =================modify here=================
-
+log_file_name = 'auto_mount.log'
 
 # =================modify here=================
 

@@ -44,8 +44,8 @@ def parse_args():
 	parser.add_argument('-r', '--remote', type=str, required=True, help='name of rclone remote drive')
 	parser.add_argument('-rp', '--remote-path', type=str, default='/mnt/user/mount_rclone',  help='file path for where to mount rclone drive')
 	parser.add_argument('-mp', '--mergerfs-path', type=str, default='/mnt/user/mount_mergerfs', help='file path for where to mount rclone union local storage')
-	parser.add_argument('-lp', '--local-path', type=str, default='/mnt/user/local', help='file path for local storage to union')
-	parser.add_argument('-l', '--log-path', type=str, default='/mnt/user/auto_mergerfs_rclone_config', help='file path for where to store logs and setup scripts')
+	parser.add_argument('-lp', '--local-path', type=str, default='/mnt/user/mount_local', help='file path for local storage to union')
+	parser.add_argument('-l', '--log-path', type=str, default='/mnt/user/auto_mount_config', help='file path for where to store logs and setup scripts')
 	parser.add_argument('-t', '--test', action='store_true', help='for testing: test script and print debug info')
 	parser.add_argument('-o', '--options', type=str, help='comma separated list of rclone options')
 

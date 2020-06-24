@@ -125,12 +125,12 @@ def log_rotate_setup(path):
 
 	if not os.path.exists(logrotate_conf_file_path):
 		with open(logrotate_conf_file_path, 'w') as fp:
-			text_to_write = "{} {\n" \
+			text_to_write = "{} {{\n" \
 						"daily \n" \
 						"rotate 7\n" \
 						"compress\n" \
 						"missingok\n" \
-						"}".format(log_file_path)
+						"}}".format(log_file_path)
 			try:
 				fp.write(text_to_write)
 			except:

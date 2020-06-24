@@ -131,6 +131,7 @@ def log_rotate_setup(path):
 						"daily \n" \
 						"rotate 7\n" \
 						"compress\n" \
+						"delaycompress\n" \
 						"missingok\n" \
 						"}}".format(log_file_path)
 			logging.debug('Writing file: %s', logrotate_conf_file_path)

@@ -131,6 +131,7 @@ def log_rotate_setup(path):
 						"compress\n" \
 						"missingok\n" \
 						"}}".format(log_file_path)
+			logging.debug('Writing file: %s', logrotate_conf_file_path)
 			try:
 				fp.write(text_to_write)
 			except:

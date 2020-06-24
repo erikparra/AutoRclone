@@ -123,7 +123,9 @@ def log_rotate_setup(path):
 	log_file_path = path + "/" + log_file_name
 	logrotate_conf_file_path = "/etc/logrotate.d/automount.conf"
 
-	if not os.path.exists(logrotate_conf_file_path):
+	if os.path.exists(logrotate_conf_file_path):
+		logging.debug('Logrotate file already exists: %s', logrotate_conf_file_path)
+	else:
 		with open(logrotate_conf_file_path, 'w') as fp:
 			text_to_write = "{} {{\n" \
 						"daily \n" \

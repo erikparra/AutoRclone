@@ -114,7 +114,7 @@ def findProcessIdByName(processName, arg):
 
 def check_path(path):
 	try:
-		os.mkdirs(path)
+		os.makedirs(path)
 		logging.debug("Directory %s created.", path)
 	except FileExistsError:
 		logging.debug("Directory %s already exists.", path)
@@ -126,7 +126,7 @@ def main():
 
 	# logging setup
 	if not os.path.exists(args.log_path):
-		os.mkdirs(args.log_path)
+		os.makedirs(args.log_path)
 	logging.basicConfig(
 		level=logging.DEBUG,
 		format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s',

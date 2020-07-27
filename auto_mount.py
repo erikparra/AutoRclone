@@ -128,12 +128,12 @@ def log_rotate_setup(path):
 	else:
 		with open(logrotate_conf_file_path, 'w') as fp:
 			text_to_write = "{} {{\n" \
-						"daily \n" \
-						"rotate 7\n" \
-						"compress\n" \
-						"delaycompress\n" \
-						"missingok\n" \
-						"}}".format(log_file_path)
+				"daily \n" \
+				"rotate 7\n" \
+				"compress\n" \
+				"delaycompress\n" \
+				"missingok\n" \
+				"}}".format(log_file_path)
 			logging.debug('Writing file: %s', logrotate_conf_file_path)
 			try:
 				fp.write(text_to_write)
@@ -190,14 +190,17 @@ def main():
 		rclone_mount_command = 'nohup rclone mount' \
 			' --config {}' \
 			' --allow-other' \
-			' --buffer-size 256M' \
-			' --dir-cache-time 720h' \
-			' --drive-chunk-size 512M' \
+			' --dir-cache-time 1000h' \
 			' --log-level INFO' \
+			' --log-file {}' \
+			' --poll-interval 15s' \
+			' --umask 002 ' \
+			' --buffer-size 256M' \
+			' --drive-chunk-size 512M' \
 			' --vfs-read-chunk-size 128M' \
 			' --vfs-read-chunk-size-limit off' \
 			' --vfs-cache-mode writes ' \
-			' {}: {} &'.format(args.config, args.remote, args.remote_path)
+			' {}: {} &'.format(args.config, (args.log_path + "/rclone.log"), args.remote, args.remote_path)
 
 		try:
 			subprocess.run(rclone_mount_command, shell=True)
@@ -227,11 +230,8 @@ def main():
 		# create mergerfs mount
 		mergerfs_mount_command = 'nohup mergerfs {}:{} {}'.format(args.local_path, args.remote_path, args.mergerfs_path)
 		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,noforget,' \
-				'use_ino,allow_other,cache.files=off,' \
-				'dropcacheonclose=true,async_read=false,func.getattr=newest,' \
-				'category.action=all,category.create=ff'
-
-
+				'use_ino,allow_other,func.getattr=newest,category.action=all' \
+				'category.create=ff,cache.files=partial,dropcacheonclose=true'
 		try:
 			subprocess.run(mergerfs_mount_command, shell=True)
 			logging.debug('Running mergerfs command: %s', mergerfs_mount_command)

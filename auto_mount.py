@@ -30,7 +30,8 @@ import logging.handlers
 from signal import signal, SIGINT
 
 # =================modify here=================
-log_file_name = 'auto_mount.log'
+log_automount_name = 'auto_mount.log'
+log_rclone_name = 'rclone.log'
 
 # =================modify here=================
 
@@ -120,25 +121,45 @@ def check_path(path):
 		logging.debug("Directory %s already exists.", path)
 
 def log_rotate_setup(path):
-	log_file_path = path + "/" + log_file_name
-	logrotate_conf_file_path = "/etc/logrotate.d/automount.conf"
+	log_path_automount = path + '/' + log_automount_name
+	log_path_rclone = path + '/' + log_rclone_name
+	logrotate_automount_path = '/etc/logrotate.d/automount.conf'
+	logrotate_rclone_path = '/etc/logrotate.d/rclone.conf'
 
-	if os.path.exists(logrotate_conf_file_path):
-		logging.debug('Logrotate file already exists: %s', logrotate_conf_file_path)
+	if os.path.exists(logrotate_automount_path):
+		logging.debug('Logrotate file already exists: %s', logrotate_automount_path)
 	else:
-		with open(logrotate_conf_file_path, 'w') as fp:
+		with open(logrotate_automount_path, 'w') as fp:
 			text_to_write = "{} {{\n" \
-				"daily \n" \
-				"rotate 7\n" \
-				"compress\n" \
-				"delaycompress\n" \
-				"missingok\n" \
-				"}}".format(log_file_path)
-			logging.debug('Writing file: %s', logrotate_conf_file_path)
+				"\tdaily \n" \
+				"\trotate 7\n" \
+				"\tcompress\n" \
+				"\tdelaycompress\n" \
+				"\tmissingok\n" \
+				"}}\n".format(log_path_automount)
+			logging.debug('Writing file: %s', logrotate_automount_path)
 			try:
 				fp.write(text_to_write)
 			except:
-				logging.error("failed to write {} to {}".format(text_to_write, logrotate_conf_file_path))
+				logging.error("failed to write {} to {}".format(text_to_write, logrotate_automount_path))
+
+	if os.path.exists(logrotate_rclone_path):
+		logging.debug('Logrotate file already exists: %s', logrotate_rclone_path)
+	else:
+		with open(logrotate_rclone_path, 'w') as fp:
+			text_to_write = "{} {{\n" \
+				"\tdaily \n" \
+				"\trotate 7\n" \
+				"\tcompress\n" \
+				"\tdelaycompress\n" \
+				"\tmissingok\n" \
+				"}}\n".format(log_path_rclone)
+			logging.debug('Writing file: %s', logrotate_rclone_path)
+			try:
+				fp.write(text_to_write)
+			except:
+				logging.error("failed to write {} to {}".format(text_to_write, logrotate_rclone_path))
+
 
 def main():
 

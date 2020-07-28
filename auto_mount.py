@@ -215,12 +215,8 @@ def main():
 			' --log-level INFO' \
 			' --log-file {}' \
 			' --poll-interval 15s' \
-			' --umask 002 ' \
-			' --buffer-size 256M' \
-			' --drive-chunk-size 512M' \
-			' --vfs-read-chunk-size 128M' \
-			' --vfs-read-chunk-size-limit off' \
-			' --vfs-cache-mode writes ' \
+			' --umask 002' \
+			' --vfs-read-chunk-size 32M' \
 			' {}: {} &'.format(args.config, (args.log_path + "/rclone.log"), args.remote, args.remote_path)
 
 		try:
@@ -250,9 +246,16 @@ def main():
 
 		# create mergerfs mount
 		mergerfs_mount_command = 'nohup mergerfs {}:{} {}'.format(args.local_path, args.remote_path, args.mergerfs_path)
-		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,noforget,' \
-				'use_ino,allow_other,func.getattr=newest,category.action=all,' \
-				'category.create=ff,cache.files=partial,dropcacheonclose=true'
+		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,' \
+				'noforget,' \
+				'use_ino,' \
+				'inodecalc=path-hash,' \
+				'allow_other,' \
+				'func.getattr=newest,' \
+				'category.action=all,' \
+				'category.create=ff,' \
+				'cache.files=partial,' \
+				'dropcacheonclose=true'
 		try:
 			subprocess.run(mergerfs_mount_command, shell=True)
 			logging.debug('Running mergerfs command: %s', mergerfs_mount_command)

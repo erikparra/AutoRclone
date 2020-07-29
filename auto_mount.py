@@ -249,7 +249,6 @@ def main():
 		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,' \
 				'noforget,' \
 				'use_ino,' \
-				'inodecalc=path-hash,' \
 				'allow_other,' \
 				'func.getattr=newest,' \
 				'category.action=all,' \

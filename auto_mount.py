@@ -173,7 +173,7 @@ def main():
 		level=logging.DEBUG,
 		format='%(asctime)s %(name)-8s %(levelname)-8s %(message)s',
 		handlers=[
-			logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path + "/" + log_file_name))])
+			logging.handlers.WatchedFileHandler(os.environ.get("LOGFILE", args.log_path + "/" + log_automount_name))])
 
 	logging.info('Auto Mergerfs/Rclone Mount Started.')
 

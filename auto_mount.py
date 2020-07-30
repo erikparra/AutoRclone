@@ -248,7 +248,6 @@ def main():
 		# create mergerfs mount
 		mergerfs_mount_command = 'nohup mergerfs {}:{} {}'.format(args.local_path, args.remote_path, args.mergerfs_path)
 		mergerfs_mount_command = mergerfs_mount_command + ' -o rw,' \
-				'noforget,' \
 				'use_ino,' \
 				'allow_other,' \
 				'func.getattr=newest,' \

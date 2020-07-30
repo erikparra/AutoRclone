@@ -254,7 +254,7 @@ def main():
 				'func.getattr=newest,' \
 				'category.action=all,' \
 				'category.create=ff,' \
-				'cache.files=partial,' \
+				'cache.files=auto-full,' \
 				'dropcacheonclose=true'
 		try:
 			subprocess.run(mergerfs_mount_command, shell=True)

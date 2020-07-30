@@ -214,8 +214,8 @@ def main():
 			' --dir-cache-time 1000h' \
 			' --log-level INFO' \
 			' --log-file {}' \
-			' --poll-interval 15s' \
 			' --uid 1000' \
+			' --gid 1000' \
 			' --umask 0002' \
 			' --vfs-read-chunk-size 32M' \
 			' {}: {} &'.format(args.config, (args.log_path + "/rclone.log"), args.remote, args.remote_path)
